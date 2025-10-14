@@ -1,7 +1,10 @@
+# render.yaml
 services:
   - type: web
-    name: neraarentalhouse
+    name: neraa-rental-house
     env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn run:app
-    plan: free
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn 'app:create_app()'"
+    envVars:
+      - key: FLASK_ENV
+        value: production
