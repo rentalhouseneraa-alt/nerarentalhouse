@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}New Order{% endblock %}
+{% block content %}
+<h3>{% if order %}Edit Order #{{ order.id }}{% else %}New Order{% endif %}</h3>
+<div class="card p-3 shadow-sm">
+<form method="post" enctype="multipart/form-data">
+  {{ form.hidden_tag() }}
+  <!-- Hidden quantity field set to 1 -->
+  <input type="hidden" name="quantity" value="1">
+  
+  <div class="row">
+    <div class="col-md-6">
+      <div class="mb-2">{{ form.customer_name.label }} {{ form.customer_name(class="form-control") }}</div>
+      <div class="mb-2">{{ form.phone.label }} {{ form.phone(class="form-control") }}</div>
+      <div class="mb-2">{{ form.address.label }} {{ form.address(class="form-control") }}</div>
+      <hr>
+      <div class="mb-2">{{ form.product_name.label }} {{ form.product_name(class="form-control") }}</div>
+      <div class="mb-2">{{ form.product_details.label }} {{ form.product_details(class="form-control") }}</div>
+      <div class="mb-2">{{ form.price.label }} {{ form.price(class="form-control") }}</div>
+      <div class="mb-2">{{ form.amount_advance.label }} {{ form.amount_advance(class="form-control") }}</div>
+    </div>
+    <div class="col-md-6">
+      <div class="mb-2">{{ form.photos.label }} {{ form.photos(class="form-control", multiple=true) }}</div>
+      <div class="mb-2">
+        <label class="form-label">Delivery datetime</label>
+        <input type="datetime-local" name="delivery_datetime" class="form-control" 
+               value="{{ order.delivery_datetime.strftime('%Y-%m-%dT%H:%M') if order and order.delivery_datetime else '' }}">
+      </div>
+      <div class="mb-2">
+        <label class="form-label">Return datetime</label>
+        <input type="datetime-local" name="return_datetime" class="form-control" 
+               value="{{ order.return_datetime.strftime('%Y-%m-%dT%H:%M') if order and order.return_datetime else '' }}">
+      </div>
+      <div class="mt-3">
+        <button class="btn btn-success">{{ form.submit.label }}</button>
+        <a class="btn btn-outline-secondary" href="{{ url_for('main.staff_orders') }}">Cancel</a>
+      </div>
+    </div>
+  </div>
+</form>
+
+{% if order and order.get_photos() %}
+  <hr><h5>Photos</h5>
+  <div class="d-flex flex-wrap">
+    {% for p in order.get_photos() %}
+      <div class="m-2"><img src="{{ url_for('main.uploaded_file', filename=p) }}" style="max-width:150px; max-height:150px;" class="rounded"></div>
+    {% endfor %}
+  </div>
+{% endif %}
+</div>
+{% endblock %}

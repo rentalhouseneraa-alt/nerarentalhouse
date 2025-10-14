@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rental Bill - Order #{{ order.id }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
+
+    .bill-container {
+      max-width: 700px;
+      width: 90%;
+      margin: 30px auto;
+      background: #fff;
+      border: 1px solid #ccc;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 8px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 26px;
+      margin-bottom: 10px;
+    }
+
+    .company {
+      text-align: center;
+      font-weight: bold;
+      margin-bottom: 10px;
+      word-wrap: break-word;
+    }
+
+    .info {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .section {
+      flex: 1 1 300px;
+      min-width: 250px;
+    }
+
+    .section h3 {
+      border-bottom: 1px solid #000;
+      padding-bottom: 5px;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      margin: 5px 0;
+      font-size: 14px;
+      word-break: break-word;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #333;
+      padding: 8px;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      background-color: #eee;
+    }
+
+    .total {
+      text-align: right;
+      margin-top: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      word-break: break-word;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 13px;
+      color: #555;
+    }
+
+    .btn-container {
+      text-align: center;
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 5px;
+      display: inline-block;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #0056b3;
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 22px;
+      }
+      .bill-container {
+        padding: 15px;
+      }
+      .section h3 {
+        font-size: 16px;
+      }
+      table, th, td {
+        font-size: 12px;
+      }
+      .total {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bill-container">
+    <h1>Rental Bill</h1>
+    <div class="company"><h2>{{ company_name }}</h2></div>
+    <div style="text-align:right;">
+      <h3><strong>Date:</strong> {{ order.created_at.strftime('%d-%m-%Y') }}</h3>
+    </div>
+
+    <div class="info">
+      <div class="section">
+        <h3>Customer Details</h3>
+        <p><strong>Name:</strong> {{ order.customer.name }}</p>
+        <p><strong>Phone:</strong> {{ order.customer.phone }}</p>
+        <p><strong>Address:</strong> {{ order.customer.address }}</p>
+      </div>
+      <div class="section">
+        <h3>Order Details</h3>
+        <p><strong>Product:</strong> {{ order.product_name }}</p>
+        <p><strong>Delivery:</strong> {{ order.delivery_datetime.strftime('%d-%m-%Y') if order.delivery_datetime else 'N/A' }}</p>
+        <p><strong>Return:</strong> {{ order.return_datetime.strftime('%d-%m-%Y') if order.return_datetime else 'N/A' }}</p>
+        <p><strong>Status:</strong> {{ order.status }}</p>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Rent Price</th>
+          <th>Quantity</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{ order.product_name }}</td>
+          <td>{{ order.price }} Rs</td>
+          <td>{{ order.quantity }}</td>
+          <td>{{ order.total_amount or (order.price * order.quantity) }} Rs</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="total">Advance Paid: {{ order.amount_advance or 0 }} Rs</div>
+    <div class="total">Pending: {{ order.amount_pending or 0 }} Rs</div>
+    <div class="total">Grand Total: {{ order.total_amount or (order.price * order.quantity) }} Rs</div>
+
+    <div class="footer">
+      Thank you for choosing {{ company_name }}!<br>
+      Visit again!
+    </div>
+
+    {% if not pdf %}
+    <div class="btn-container">
+      <a href="{{ url_for('main.admin_bill', order_id=order.id, format='pdf') }}" class="btn">Download PDF</a>
+      <a href="{{ url_for('main.admin_orders') }}" class="btn" style="background-color: #6c757d;">Back</a>
+    </div>
+    {% endif %}
+  </div>
+</body>
+</html>

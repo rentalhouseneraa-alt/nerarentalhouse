@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Order #{{ order.id }}{% endblock %}
+{% block content %}
+<h4>Order #{{ order.id }}</h4>
+<div class="card p-3 shadow-sm">
+  <p><strong>Customer:</strong> {{ order.customer.name }} ({{ order.customer.phone }})</p>
+  <p><strong>Product:</strong> {{ order.product_name }} x{{ order.quantity }}</p>
+  <p>{{ order.product_details }}</p>
+  <p><strong>Total:</strong> ₹{{ "%.2f"|format(order.total_amount or (order.price * order.quantity)) }}</p>
+  <p><strong>Advance:</strong> ₹{{ "%.2f"|format(order.amount_advance) }} &nbsp; <strong>Pending:</strong> ₹{{ "%.2f"|format(order.amount_pending) }}</p>
+  <p><strong>Status:</strong> {{ order.status }}</p>
+  <div class="mt-3">
+    <a class="btn btn-outline-secondary" href="{{ url_for('main.staff_orders') }}">Back</a>
+    {% if order.status != 'approved' %}
+      <!-- keep the edit link hidden from main UI; staff can still be allowed to edit through their dashboard if necessary -->
+      <!-- <a class="btn btn-warning" href="{{ url_for('main.staff_edit_order', order_id=order.id) }}">Edit</a> -->
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

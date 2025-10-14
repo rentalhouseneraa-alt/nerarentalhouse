@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="row align-items-center mb-3">
+  <div class="col-md-8">
+    <h2 class="mb-0">Admin Dashboard</h2>
+    <p class="text-muted small">Manage orders, staff, reports and store performance.</p>
+  </div>
+  <div class="col-md-4 text-md-end">
+    <div class="btn-group" role="group">
+      <a href="{{ url_for('main.admin_orders') }}" class="btn btn-primary btn-lg">Manage Orders</a>
+      <a href="{{ url_for('main.admin_staffs') }}" class="btn btn-outline-secondary btn-lg">Manage Staff</a>
+      <a href="{{ url_for('main.admin_reports') }}" class="btn btn-success btn-lg">Reports</a>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-md-3">
+    <div class="card p-3 shadow-sm stat-card">
+      <div class="stat-title">Total Orders</div>
+      <div class="stat-value">{{ total_orders }}</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3 shadow-sm stat-card">
+      <div class="stat-title">Pending</div>
+      <div class="stat-value text-warning">{{ pending }}</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3 shadow-sm stat-card">
+      <div class="stat-title">Approved</div>
+      <div class="stat-value text-success">{{ approved }}</div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card p-3 shadow-sm stat-card">
+      <div class="stat-title">Completed Revenue</div>
+      <div class="stat-value">₹{{ "%.2f"|format(total_revenue) }}</div>
+    </div>
+  </div>
+</div>
+
+<!-- Chart smaller, below -->
+<div class="row">
+  <div class="col-md-12">
+    <div class="card p-3 shadow-sm">
+      <h5 class="mb-3">Staff performance</h5>
+      <canvas id="staffChart" height="80"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+const labels = {{ staff_perf | map(attribute='staff.username') | list | tojson }};
+const ordersData = {{ staff_perf | map(attribute='orders') | list | tojson }};
+const revenueData = {{ staff_perf | map(attribute='revenue') | list | tojson }};
+const ctx = document.getElementById('staffChart').getContext('2d');
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [
+            { label: 'Orders', data: ordersData, backgroundColor: 'rgba(33, 150, 243, 0.6)' },
+            { label: 'Revenue', data: revenueData, type: 'line', tension: 0.4, yAxisID: 'y1' }
+        ]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom' } },
+        scales: {
+            y: { beginAtZero: true },
+            y1: { position: 'right', beginAtZero: true, grid: { drawOnChartArea: false } }
+        }
+    }
+});
+</script>
+{% endblock %}

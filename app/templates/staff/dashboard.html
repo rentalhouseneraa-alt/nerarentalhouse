@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Staff Dashboard{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3>Your Dashboard</h3>
+  <div>
+    <a class="btn btn-primary me-2" href="{{ url_for('main.staff_new_customer') }}">Add New Order</a>
+    <a class="btn btn-outline-secondary" href="{{ url_for('main.staff_orders') }}">My Orders</a>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-3"><div class="card p-3 shadow-sm"><div class="stat-title">Total Orders</div><div class="stat-value">{{ total }}</div></div></div>
+  <div class="col-md-3"><div class="card p-3 shadow-sm"><div class="stat-title">Pending</div><div class="stat-value text-warning">{{ pending }}</div></div></div>
+  <div class="col-md-3"><div class="card p-3 shadow-sm"><div class="stat-title">Approved</div><div class="stat-value text-success">{{ approved }}</div></div></div>
+  <div class="col-md-3"><div class="card p-3 shadow-sm"><div class="stat-title">Revenue</div><div class="stat-value">₹{{ "%.2f"|format(revenue) }}</div></div></div>
+</div>
+{% endblock %}

@@ -1,0 +1,260 @@
+{% extends "base.html" %}
+{% block title %}Edit Order #{{ order.id }}{% endblock %}
+
+{% block content %}
+<h3>Edit Order #{{ order.id }}</h3>
+
+<form method="post" enctype="multipart/form-data" id="editOrderForm">
+  {{ form.hidden_tag() }}
+  <div class="row">
+    <div class="col-md-8">
+      <!-- STATUS AUTO SUBMIT -->
+      <div class="mb-3">
+        <label class="form-label">Status</label>
+        <select name="status" class="form-select" id="statusSelect">
+          <option value="pending" {% if order.status=='pending' %}selected{% endif %}>Pending</option>
+          <option value="approved" {% if order.status=='approved' %}selected{% endif %}>Approved</option>
+          <option value="completed" {% if order.status=='completed' %}selected{% endif %}>Completed</option>
+          <option value="canceled" {% if order.status=='canceled' %}selected{% endif %}>Canceled</option>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        {{ form.customer_name.label(class="form-label") }}
+        {{ form.customer_name(class="form-control", required=True) }}
+      </div>
+      <div class="mb-3">
+        {{ form.phone.label(class="form-label") }}
+        {{ form.phone(class="form-control", required=True) }}
+      </div>
+      <div class="mb-3">
+        {{ form.address.label(class="form-label") }}
+        {{ form.address(class="form-control") }}
+      </div>
+
+      <hr/>
+      <h5>Product / Billing</h5>
+
+      <div class="mb-3">
+        {{ form.product_name.label(class="form-label") }}
+        {{ form.product_name(class="form-control", required=True) }}
+      </div>
+      <div class="mb-3">
+        {{ form.product_details.label(class="form-label") }}
+        {{ form.product_details(class="form-control", rows="4") }}
+      </div>
+
+      <div class="row">
+        <div class="col-md-4 mb-3">
+          {{ form.price.label(class="form-label") }}
+          {{ form.price(class="form-control", id="priceInput", required=True, step="0.01", min="0") }}
+        </div>
+        <div class="col-md-4 mb-3">
+          {{ form.quantity.label(class="form-label") }}
+          {{ form.quantity(class="form-control", id="quantityInput", required=True, min="1") }}
+        </div>
+        <div class="col-md-4 mb-3">
+          {{ form.amount_advance.label(class="form-label") }}
+          {{ form.amount_advance(class="form-control", id="advanceInput", step="0.01", min="0") }}
+        </div>
+      </div>
+
+      <div class="mb-3">
+        {{ form.photos.label(class="form-label") }}
+        {{ form.photos(class="form-control", multiple=True, accept="image/*") }}
+        <small class="text-muted">Upload additional photos (these will be appended).</small>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          {{ form.delivery_datetime.label(class="form-label") }}
+          <input type="datetime-local" name="delivery_datetime" class="form-control" id="deliveryInput" 
+                 value="{{ order.delivery_datetime.strftime('%Y-%m-%dT%H:%M') if order.delivery_datetime else '' }}">
+          <small class="text-muted">Format: YYYY-MM-DD HH:MM</small>
+        </div>
+        <div class="col-md-6 mb-3">
+          {{ form.return_datetime.label(class="form-label") }}
+          <input type="datetime-local" name="return_datetime" class="form-control" id="returnInput"
+                 value="{{ order.return_datetime.strftime('%Y-%m-%dT%H:%M') if order.return_datetime else '' }}">
+          <small class="text-muted">Format: YYYY-MM-DD HH:MM</small>
+        </div>
+      </div>
+
+      <!-- SAVE BUTTON -->
+      <button class="btn btn-primary" type="submit">Save Order</button>
+      <a class="btn btn-outline-secondary" href="{{ url_for('main.admin_orders') }}">Back</a>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5>Order Summary</h5>
+          <p><strong>Order ID:</strong> {{ order.id }}</p>
+          <p><strong>Created:</strong> {{ order.created_at.strftime('%Y-%m-%d %H:%M') if order.created_at else '-' }}</p>
+          <p><strong>Staff:</strong><br/>{{ order.staff.full_name if order.staff and order.staff.full_name else (order.staff.username if order.staff else '-') }}</p>
+          <hr/>
+          <p><strong>Customer:</strong><br/>
+            <span id="summaryCustomer">{{ order.customer.name if order.customer else '-' }}</span><br/>
+            <span id="summaryPhone">{{ order.customer.phone if order.customer else '' }}</span>
+          </p>
+          <p><strong>Address:</strong><br/>
+            <span id="summaryAddress">{{ order.customer.address if order.customer else '-' }}</span>
+          </p>
+          <hr/>
+          <p><strong>Product:</strong><br/>
+            <span id="summaryProduct">{{ order.product_name }}</span>
+          </p>
+          <p><strong>Quantity:</strong> <span id="summaryQuantity">{{ order.quantity }}</span></p>
+          <p><strong>Price:</strong> ₹<span id="summaryPrice">{{ "%.2f"|format(order.price) }}</span></p>
+          <p><strong>Total:</strong> ₹<span id="summaryTotal">{{ "%.2f"|format(order.total_amount or (order.price * order.quantity)) }}</span></p>
+          <p><strong>Advance:</strong> ₹<span id="summaryAdvance">{{ "%.2f"|format(order.amount_advance) }}</span></p>
+          <p><strong>Pending:</strong> ₹<span id="summaryPending">{{ "%.2f"|format(order.amount_pending) }}</span></p>
+          <hr/>
+          <p><strong>Delivery:</strong><br/><span id="summaryDelivery">{{ order.delivery_datetime.strftime('%Y-%m-%d %H:%M') if order.delivery_datetime else '-' }}</span></p>
+          <p><strong>Return:</strong><br/><span id="summaryReturn">{{ order.return_datetime.strftime('%Y-%m-%d %H:%M') if order.return_datetime else '-' }}</span></p>
+          <hr/>
+          <a class="btn btn-success w-100 mb-2" href="{{ url_for('main.admin_bill', order_id=order.id) }}" target="_blank">Open Bill</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          <h6>Product Images</h6>
+          <div class="d-flex flex-wrap">
+            {% for p in order.get_photos() %}
+              <div class="me-2 mb-2" style="width:120px;">
+                <img src="{{ url_for('main.uploaded_file', filename=p) }}" class="img-fluid rounded" />
+              </div>
+            {% endfor %}
+            {% if not order.get_photos() %}
+              <p class="text-muted">No images uploaded.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('editOrderForm');
+  const statusSelect = document.getElementById('statusSelect');
+  const priceInput = document.getElementById('priceInput');
+  const quantityInput = document.getElementById('quantityInput');
+  const advanceInput = document.getElementById('advanceInput');
+  const deliveryInput = document.getElementById('deliveryInput');
+  const returnInput = document.getElementById('returnInput');
+
+  // Update summary in real-time
+  function updateSummary() {
+    const price = parseFloat(priceInput.value) || 0;
+    const quantity = parseInt(quantityInput.value) || 1;
+    const advance = parseFloat(advanceInput.value) || 0;
+    const total = price * quantity;
+    const pending = total - advance;
+
+    document.getElementById('summaryPrice').textContent = price.toFixed(2);
+    document.getElementById('summaryQuantity').textContent = quantity;
+    document.getElementById('summaryTotal').textContent = total.toFixed(2);
+    document.getElementById('summaryAdvance').textContent = advance.toFixed(2);
+    document.getElementById('summaryPending').textContent = pending.toFixed(2);
+  }
+
+  // Update customer info in summary
+  function updateCustomerInfo() {
+    const customerName = document.querySelector('input[name="customer_name"]').value;
+    const phone = document.querySelector('input[name="phone"]').value;
+    const address = document.querySelector('input[name="address"]').value;
+    const productName = document.querySelector('input[name="product_name"]').value;
+
+    document.getElementById('summaryCustomer').textContent = customerName || '-';
+    document.getElementById('summaryPhone').textContent = phone || '';
+    document.getElementById('summaryAddress').textContent = address || '-';
+    document.getElementById('summaryProduct').textContent = productName || '-';
+  }
+
+  // Update datetime displays
+  function updateDateTimeDisplay() {
+    const delivery = deliveryInput.value;
+    const returnDate = returnInput.value;
+    
+    document.getElementById('summaryDelivery').textContent = 
+      delivery ? delivery.replace('T', ' ') : '-';
+    document.getElementById('summaryReturn').textContent = 
+      returnDate ? returnDate.replace('T', ' ') : '-';
+  }
+
+  // Add event listeners
+  priceInput.addEventListener('input', updateSummary);
+  quantityInput.addEventListener('input', updateSummary);
+  advanceInput.addEventListener('input', updateSummary);
+  
+  document.querySelector('input[name="customer_name"]').addEventListener('input', updateCustomerInfo);
+  document.querySelector('input[name="phone"]').addEventListener('input', updateCustomerInfo);
+  document.querySelector('input[name="address"]').addEventListener('input', updateCustomerInfo);
+  document.querySelector('input[name="product_name"]').addEventListener('input', updateCustomerInfo);
+  
+  deliveryInput.addEventListener('change', updateDateTimeDisplay);
+  returnInput.addEventListener('change', updateDateTimeDisplay);
+
+  // Auto-submit on status change
+  let isStatusChanging = false;
+  statusSelect.addEventListener('change', function() {
+    if (!isStatusChanging && confirm('Do you want to save the order with the new status?')) {
+      isStatusChanging = true;
+      form.submit();
+    } else if (!isStatusChanging) {
+      // Reset to original value if user cancels
+      statusSelect.value = "{{ order.status }}";
+    }
+  });
+
+  // Form validation before submit
+  form.addEventListener('submit', function(e) {
+    const price = parseFloat(priceInput.value);
+    const quantity = parseInt(quantityInput.value);
+    const advance = parseFloat(advanceInput.value) || 0;
+    const total = price * quantity;
+
+    if (advance > total) {
+      e.preventDefault();
+      alert('Advance amount cannot be greater than total amount!');
+      return false;
+    }
+
+    if (quantity < 1) {
+      e.preventDefault();
+      alert('Quantity must be at least 1!');
+      return false;
+    }
+
+    if (price < 0) {
+      e.preventDefault();
+      alert('Price cannot be negative!');
+      return false;
+    }
+  });
+
+  // Initialize summary on page load
+  updateSummary();
+  updateCustomerInfo();
+  updateDateTimeDisplay();
+});
+</script>
+
+<style>
+  .form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+  
+  #summaryCustomer, #summaryPhone, #summaryAddress, #summaryProduct,
+  #summaryPrice, #summaryQuantity, #summaryTotal, #summaryAdvance, 
+  #summaryPending, #summaryDelivery, #summaryReturn {
+    font-weight: 500;
+    color: #212529;
+  }
+</style>
+
+{% endblock %}

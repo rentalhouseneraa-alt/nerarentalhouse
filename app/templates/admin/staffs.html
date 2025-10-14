@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Staff Management{% endblock %}
+{% block content %}
+<h3>Staffs</h3>
+<div class="row">
+  <div class="col-md-6">
+    <form method="post">
+      {{ form.hidden_tag() }}
+      <div class="mb-2">{{ form.username.label }} {{ form.username(class="form-control") }}</div>
+      <div class="mb-2">{{ form.full_name.label }} {{ form.full_name(class="form-control") }}</div>
+      <div class="mb-2">{{ form.password.label }} {{ form.password(class="form-control") }}</div>
+      <div class="mb-2">{{ form.is_admin() }} {{ form.is_admin.label }}</div>
+      <div><button class="btn btn-primary">{{ form.submit.label }}</button></div>
+    </form>
+  </div>
+  <div class="col-md-6">
+    <h5>Existing staff</h5>
+    <ul class="list-group">
+      {% for s in staffs %}
+        <li class="list-group-item d-flex justify-content-between">
+          <div>{{ s.username }} {% if s.is_admin %}<span class="badge bg-info">Admin</span>{% endif %} <br><small>{{ s.full_name }}</small></div>
+          <div><small>Created {{ s.created_at.strftime('%Y-%m-%d') }}</small></div>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

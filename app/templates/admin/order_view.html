@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Order #{{ order.id }}{% endblock %}
+{% block content %}
+<h4>Order #{{ order.id }}</h4>
+<div class="card p-3 shadow-sm">
+  <p><strong>Staff:</strong> {{ order.staff.username }} &nbsp; <strong>Created:</strong> {{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+  <hr>
+  <p><strong>Customer:</strong> {{ order.customer.name }} ({{ order.customer.phone }})</p>
+  <p><strong>Product:</strong> {{ order.product_name }} x{{ order.quantity }}</p>
+  <p>{{ order.product_details }}</p>
+  <p><strong>Price:</strong> ₹{{ "%.2f"|format(order.price) }}</p>
+  <p><strong>Total:</strong> ₹{{ "%.2f"|format(order.total_amount or (order.price * order.quantity)) }}</p>
+  <p><strong>Advance:</strong> ₹{{ "%.2f"|format(order.amount_advance) }} &nbsp; <strong>Pending:</strong> ₹{{ "%.2f"|format(order.amount_pending) }}</p>
+  <hr>
+  <p><strong>Delivery:</strong> {{ order.delivery_datetime.strftime('%Y-%m-%d %H:%M') if order.delivery_datetime else '-' }} &nbsp; <strong>Return:</strong> {{ order.return_datetime.strftime('%Y-%m-%d %H:%M') if order.return_datetime else '-' }}</p>
+  <hr>
+  <p>Status: <strong>{{ order.status }}</strong></p>
+  <div class="mt-3">
+    <a class="btn btn-primary" href="{{ url_for('main.admin_bill', order_id=order.id) }}" target="_blank">Open Bill</a>
+    <a class="btn btn-outline-secondary" href="{{ url_for('main.admin_orders') }}">Back to Orders</a>
+  </div>
+</div>
+{% endblock %}

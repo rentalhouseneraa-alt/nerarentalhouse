@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<h3>Reports & Bills</h3>
+<div class="row">
+  <div class="col-md-6 mb-3">
+    <div class="card p-3 shadow-sm">
+      <h5>Daily CSV Report</h5>
+      <form action="{{ url_for('main.admin_reports_download') }}" method="get">
+        <input type="hidden" name="type" value="daily">
+        <div class="mb-2"><input name="date" type="date" class="form-control" required></div>
+        <button class="btn btn-success">Download CSV</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="col-md-6 mb-3">
+    <div class="card p-3 shadow-sm">
+      <h5>Monthly CSV Report</h5>
+      <form action="{{ url_for('main.admin_reports_download') }}" method="get">
+        <input type="hidden" name="type" value="monthly">
+        <div class="mb-2"><input name="date" type="month" class="form-control" required></div>
+        <button class="btn btn-success">Download CSV</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="col-md-6 mb-3">
+    <div class="card p-3 shadow-sm">
+      <h5>Download Bills (PDF ZIP)</h5>
+      {% if not xhtml2pdf %}
+        <div class="alert alert-warning">PDF generation is not available on this server. Install <code>xhtml2pdf</code> to enable it.</div>
+      {% endif %}
+      <form action="{{ url_for('main.admin_download_bills') }}" method="get">
+        <input type="hidden" name="type" value="daily">
+        <div class="mb-2"><input name="date" type="date" class="form-control" required></div>
+        <button class="btn btn-primary">Download Bills for Day (ZIP)</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="col-md-6 mb-3">
+    <div class="card p-3 shadow-sm">
+      <h5>Download Bills for Month (PDF ZIP)</h5>
+      <form action="{{ url_for('main.admin_download_bills') }}" method="get">
+        <input type="hidden" name="type" value="monthly">
+        <div class="mb-2"><input name="date" type="month" class="form-control" required></div>
+        <button class="btn btn-primary">Download Bills for Month (ZIP)</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

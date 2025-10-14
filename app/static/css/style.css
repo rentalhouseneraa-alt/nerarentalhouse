@@ -1,0 +1,191 @@
+/* ===========================
+   Global Styles (style.css)
+   =========================== */
+
+/* Reset & Base */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Poppins', Arial, sans-serif;
+  background-color: #f8f9fa;
+  color: #212529;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ---------------------------
+   Navbar
+--------------------------- */
+.navbar {
+  background-color: #ffffff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+
+.navbar-brand {
+  font-weight: 600;
+  color: #0d6efd !important;
+  font-size: 1.25rem;
+}
+
+.navbar-nav .nav-link {
+  color: #333 !important;
+  transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #0d6efd !important;
+}
+
+/* ---------------------------
+   Buttons
+--------------------------- */
+.btn {
+  border-radius: 8px !important;
+  transition: all 0.25s ease !important;
+}
+
+.btn:hover, .btn:focus {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* ---------------------------
+   Forms
+--------------------------- */
+.form-control {
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  padding: 0.6rem 0.9rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 0.2rem rgba(13,110,253,0.2);
+}
+
+/* ---------------------------
+   Tables
+--------------------------- */
+.table {
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.table thead {
+  background-color: #0d6efd;
+  color: #fff;
+}
+
+.table-hover tbody tr:hover {
+  background-color: #e9f2ff;
+  transition: background-color 0.3s ease;
+}
+
+.table td, .table th {
+  vertical-align: middle;
+}
+
+/* Responsive Table Scroll */
+.table-responsive {
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+/* ---------------------------
+   Cards
+--------------------------- */
+.card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+/* ---------------------------
+   Animations
+--------------------------- */
+.fade-in {
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-up {
+  animation: slideUp 0.6s ease forwards;
+}
+
+@keyframes slideUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------------------------
+   Responsive Layouts
+--------------------------- */
+@media (max-width: 992px) {
+  .navbar-nav {
+    text-align: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .d-flex {
+    flex-wrap: wrap !important;
+  }
+
+  .btn, .form-control {
+    width: 100%;
+  }
+
+  table {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  h3, h4, h5 {
+    font-size: 1rem;
+  }
+
+  .btn {
+    padding: 8px 14px;
+  }
+
+  .table td, .table th {
+    font-size: 12px;
+  }
+}
+
+/* ---------------------------
+   Footer
+--------------------------- */
+footer {
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 0.9rem;
+  color: #777;
+}
